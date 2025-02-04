@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
  
 st.write("""
-# ~ 내가 제일 잘먹어 ~
+# ~ 야무지게 먹어야징 ~
 
          배고프다...
 
@@ -20,6 +20,8 @@ value_vars=df.columns[start_idx:-2],
 not_na_df = melted_df[~melted_df['menu'].isin(['-','x','<결석>'])]
 gdf = not_na_df.groupby('ename')['menu'].count().reset_index()
 #gdf.plot(x='ename', y='menu'. kind = 'bar'
+
+gdf
 
 # 📊 Matplotlib로 바 차트 그리기
 
