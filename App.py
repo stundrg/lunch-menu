@@ -1,12 +1,37 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+import psycopg
 
-st.title("순심 팀 점심 기록장")
+DB_CONFIG = {
+    "dbname" : "sunsindb",
+    "user" : "sunsin",
+    "password" : "mysecretpassword",
+    "host" : "localhost",
+    "port" : "5432"
+}
+
+def get_connection():
+    return psycopg.connect(**DB_CONFIG)
+
+st.title("현룡 점심 기록장")
 st.subheader("입력")
-menu = st.text_input("오늘 점심", placeholder = "예 : 김치찌개")
-member_name = st.text_input("내 이름", placeholder = "예: 강현룡", value = "hyun")
+menu_name = st.text_input("오늘 점심", placeholder = "예 : 김치찌개")
+member_name = st.text_input("나의 이름", placeholder = "예: 강현룡", value = "hyun")
 dt = st.date_input("YUMMY DATE")
+isPress = st.button("메뉴 저장")
+
+if isPress:
+    if menu_name and member_name and dt:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            "INSERT INTO lunch_menu (menu_name, member_name, dt) VALUES (%s, %s, %s);",
+            (menu_name, member_name, dt)
+        )    
+        st.success(f"버튼{isPress} // {menu_name} // {member_name} // {dt}")
+    else:
+        st.warning(f"모든 값을 입력해주세요!")
 
 
 
@@ -21,7 +46,7 @@ st.write("""
 
 ![img](https://cdnweb01.wikitree.co.kr/webdata/editor/201608/14/img_20160814095841_398f23f1.jpg)
 """ )
-
+st.subheader("통계")
 df = pd.read_csv('note/menu.csv')
 
 start_idx = df.columns.get_loc('2025-01-07')
