@@ -103,14 +103,24 @@ st.pyplot(fig)
 # TODO
 # CSV 로드 한번에 다 디비에 INSERT 하는거
 st.subheader("Bulk Insert")
-if st.button("한방에 인서트"):
+isPress  = st.button("한방에 인서트")
+
+if isPress:
+    df = pd.read_csv('note/menu.csv')
+    start_idx = df.columns.get_loc('2025-01-07')
+    end_idx = -2
+    rdf = df.melt(id_vars = ['ename'], value_vars = df.columns[start_idx:-2], var_name = 'dt',value_name = 'menu')
+
     conn = get_connection()
     cursor = conn.cursor()
+    cursor.execute("DELETE FROM lunch_menu;")
+    conn.commit()
 
-    insert_df = df[['menu', 'ename', 'date']].rename(columns={'menu_name' : 'menu', 'member_name': 'ename', 'dt':'date'})
+    insert_df = [(row['menu'],row['ename'],row['dt'])  for _, row in rdf.iterrows()]
+    #.rename(columns={'menu' : 'menu_name', 'ename': 'member_name', 'date':'dt'})
     cursor.executemany(
             "INSERT INTO lunch_menu (menu_name, member_name, dt) VALUES (%s, %s, %s)",
-        df[['menu', 'ename', 'dt']].values.tolist()
+        insert_df
     )
     conn.commit()
     cursor.close()
