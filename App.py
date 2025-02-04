@@ -110,7 +110,7 @@ if st.button("한방에 인서트"):
     insert_df = df[['menu', 'ename', 'date']].rename(columns={'menu_name' : 'menu', 'member_name': 'ename', 'dt':'date'})
     cursor.executemany(
             "INSERT INTO lunch_menu (menu_name, member_name, dt) VALUES (%s, %s, %s)",
-        df[['menu', 'ename', 'dt']].values.tolist()
+        df[['menu_name', 'member_name', 'dt']].values.tolist()
     )
     conn.commit()
     cursor.close()
