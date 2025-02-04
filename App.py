@@ -1,7 +1,19 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
- 
+
+st.title("순심 팀 점심 기록장")
+st.subheader("입력")
+menu = st.text_input("오늘 점심", placeholder = "예 : 김치찌개")
+member_name = st.text_input("내 이름", placeholder = "예: 강현룡", value = "hyun")
+dt = st.date_input("YUMMY DATE")
+
+
+
+
+
+
+
 st.write("""
 # ~ 야무지게 먹어야징 ~
 
