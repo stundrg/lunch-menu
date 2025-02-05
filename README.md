@@ -20,12 +20,13 @@ $ sudo docker run --name local-postgres \
 - postgres
 
 ```sql
-CREATE TABLE public.lunch_menu(
-        id serial NOT NULL,
-        menu_name text NOT NULL,
-        member_name text NOT NULL,
-        dt date NOT NULL,
-        COMSTRAINT lunch_menu_pk PRIMARY KEY (id)
+CREATE TABLE public.lunch_menu (
+	id serial NOT NULL,
+	menu_name text NOT NULL,
+	member_name text NOT NULL,
+	dt date NOT NULL,
+	CONSTRAINT lunch_menu_pk PRIMARY KEY (id)
+);
 ```
 
 ## Dev
