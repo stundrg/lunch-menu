@@ -15,18 +15,19 @@ DB_CONFIG = {
     "port" : os.getenv("DB_PORT")
 }
 
-def get_connection(menu_name ,member_name, dt):
+def get_connection():
     return psycopg.connect(**DB_CONFIG)
-def insert_menu():
-    conn = get.connection()
+
+def insert_menu(menu_name, member_name, dt):
+    conn = get_connection()
     cursor = conn.cursor()
     cursor.execute(
             "INSERT INTO lunch_menu (menu_name, member_name, dt) VALUES (%s, %s, %s);",
             (menu_name, member_name, dt)
         )
-        conn.commit()
-        cursor.close()
-        conn.close()
+    conn.commit()
+    cursor.close()
+    conn.close()
 
 st.title("현룡 점심 기록장")
 st.subheader("입력")
@@ -44,15 +45,12 @@ if isPress:
 
 st.subheader("확인")
 query = """SELECT menu_name, member_name, dt FROM lunch_menu ORDER BY dt desc"""
-
 conn = get_connection()
 cursor = conn.cursor()
 cursor.execute(query)
 rows = cursor.fetchall()
-
-# conn.commit()
 cursor.close()
-
+conn.close()
 
 # selected_df = pd.DataFrame([[1,2,3],[4,5,6]], columns = ['a','b','c'])
 select_df = pd.DataFrame(rows, columns = ['menu','ename','dt'])
@@ -88,49 +86,26 @@ st.write("""
 
 
 st.subheader("통계")
-df = pd.read_csv('note/menu.csv')
-
-start_idx = df.columns.get_loc('2025-01-07')
-melted_df = df.melt(id_vars=['ename'],
-value_vars=df.columns[start_idx:-2],
-                        var_name='dt',value_name = 'menu')
-
-not_na_df = melted_df[~melted_df['menu'].isin(['-','x','<결석>'])]
-#gdf = not_na_df.groupby('ename')['menu'].count().reset_index()
 gdf = select_df.groupby('ename')['menu'].count().reset_index()
-#gdf.plot(x='ename', y='menu'. kind = 'bar')
-
 gdf
 
 # 📊 Matplotlib로 바 차트 그리기
-
 fig, ax = plt.subplots()
-gdf.plot(x='ename',y = 'menu', kind = 'bar', ax=ax)
+gdf.plot(x='ename',y='menu', kind='bar', ax=ax)
 st.pyplot(fig)
+
 # TODO
 # CSV 로드 한번에 다 디비에 INSERT 하는거
 st.subheader("Bulk Insert")
-isPress  = st.button("한방에 인서트")
-
-if isPress:
+if st.button("한방에 인서트"):
     df = pd.read_csv('note/menu.csv')
     start_idx = df.columns.get_loc('2025-01-07')
-    end_idx = df.columns.get_loc('2025-02-03')
-    rdf = df.melt(id_vars = ['ename'], value_vars = df.columns[start_idx:end_idx], var_name = 'dt',value_name = 'menu')
-    rdf['menu'].replace(['-','<결석>','x'],pd.NA, inplace = True)
-    rdf.dropna(subset=['menu'], inplace = True)
+    melted_df = df.melt(id_vars=['ename'] ,value_vars=df.columns[start_idx:-2],
+                         var_name='dt',value_name = 'menu')
 
-    conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute("DELETE FROM lunch_menu;")
-    conn.commit()
+    not_na_df = melted_df[~melted_df['menu'].isin(['-','x','<결석>'])]
+    for _, row in not_na_df.iterrow():
+        insert_menu(row['menu'], row['ename'], row['dt'])
 
-    insert_df = [(row['menu'],row['ename'],row['dt'])  for _, row in rdf.iterrows()]
-    #.rename(columns={'menu' : 'menu_name', 'ename': 'member_name', 'date':'dt'})
-    cursor.executemany(
-            "INSERT INTO lunch_menu (menu_name, member_name, dt) VALUES (%s, %s, %s)",
-        insert_df
-    )
-    conn.commit()
-    cursor.close()
-    st.success(f"{len(insert_df)}개의 데이터 추가 완료!")
+    st.success(f"벌크 인서트 성공")
+
