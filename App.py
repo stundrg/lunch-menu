@@ -104,7 +104,7 @@ if st.button("한방에 인서트"):
                          var_name='dt',value_name = 'menu')
 
     not_na_df = melted_df[~melted_df['menu'].isin(['-','x','<결석>'])]
-    for _, row in not_na_df.iterrow():
+    for _, row in not_na_df.iterrows():
         insert_menu(row['menu'], row['ename'], row['dt'])
 
     st.success(f"벌크 인서트 성공")
