@@ -2,13 +2,17 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import psycopg
+import os
+from dotenv import load_dotenv
 
+# https://docs.streamlit.io/develop/concepts/connections/secrets-management
+load_dotenv()
 DB_CONFIG = {
-    "dbname" : "sunsindb",
-    "user" : "sunsin",
-    "password" : "mysecretpassword",
-    "host" : "localhost",
-    "port" : "5432"
+    "user" : os.getenv("DB_USERNAME"),
+    "dbname" : os.getenv("DB_NAME"),
+    "password" : os.getenv("DB_PASSWORD"),
+    "host" : os.getenv("DB_HOST"),
+    "port" : os.getenv("DB_PORT")
 }
 
 def get_connection():
@@ -108,8 +112,10 @@ isPress  = st.button("한방에 인서트")
 if isPress:
     df = pd.read_csv('note/menu.csv')
     start_idx = df.columns.get_loc('2025-01-07')
-    end_idx = -2
-    rdf = df.melt(id_vars = ['ename'], value_vars = df.columns[start_idx:-2], var_name = 'dt',value_name = 'menu')
+    end_idx = df.columns.get_loc('2025-02-03')
+    rdf = df.melt(id_vars = ['ename'], value_vars = df.columns[start_idx:end_idx], var_name = 'dt',value_name = 'menu')
+    rdf['menu'].replace(['-','<결석>','x'],pd.NA, inplace = True)
+    rdf.dropna(subset=['menu'], inplace = True)
 
     conn = get_connection()
     cursor = conn.cursor()
@@ -124,6 +130,4 @@ if isPress:
     )
     conn.commit()
     cursor.close()
-    st.success(f"{len(df)}개의 데이터 추가 완료!")
-
-
+    st.success(f"{len(insert_df)}개의 데이터 추가 완료!")
