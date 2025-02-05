@@ -7,9 +7,10 @@ from dotenv import load_dotenv
 
 # https://docs.streamlit.io/develop/concepts/connections/secrets-management
 load_dotenv()
+db_name = os.getenv("DB_NAME")
 DB_CONFIG = {
     "user" : os.getenv("DB_USERNAME"),
-    "dbname" : os.getenv("DB_NAME"),
+    "dbname" : db_name,
     "password" : os.getenv("DB_PASSWORD"),
     "host" : os.getenv("DB_HOST"),
     "port" : os.getenv("DB_PORT")
@@ -19,17 +20,22 @@ def get_connection():
     return psycopg.connect(**DB_CONFIG)
 
 def insert_menu(menu_name, member_name, dt):
-    conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute(
-            "INSERT INTO lunch_menu (menu_name, member_name, dt) VALUES (%s, %s, %s);",
-            (menu_name, member_name, dt)
-        )
-    conn.commit()
-    cursor.close()
-    conn.close()
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+                "INSERT INTO lunch_menu (menu_name, member_name, dt) VALUES (%s, %s, %s);",
+                (menu_name, member_name, dt)
+            )
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return True
+    except Exception as e:
+        print(f"Exception:{e}")
+        return False
 
-st.title("현룡 점심 기록장")
+st.title(f"현룡 점심 기록장{db_name}")
 st.subheader("입력")
 menu_name = st.text_input("오늘 점심", placeholder = "예 : 김치찌개")
 member_name = st.text_input("나의 이름", placeholder = "예: 강현룡", value = "hyun")
@@ -38,8 +44,10 @@ isPress = st.button("메뉴 저장")
 
 if isPress:
     if menu_name and member_name and dt:
-        insert_menu(menu_name, member_name, dt)
-        st.success(f"입력 성공")
+        if insert_menu(menu_name, member_name, dt):
+            st.success(f"입력 성공")
+        else:
+            st.error(f"입력 실패")
     else:
         st.warning(f"모든 값을 입력해주세요!")
 
@@ -90,9 +98,13 @@ gdf = select_df.groupby('ename')['menu'].count().reset_index()
 gdf
 
 # 📊 Matplotlib로 바 차트 그리기
-fig, ax = plt.subplots()
-gdf.plot(x='ename',y='menu', kind='bar', ax=ax)
-st.pyplot(fig)
+try:
+    fig, ax = plt.subplots()
+    gdf.plot(x='ename',y='menu', kind='bar', ax=ax)
+    st.pyplot(fig)
+except Exception as e:
+    st.warning(f"차트를 그리기에 충분한 데이터가 없습니다.")
+    print(f"Exception:{e}" )
 
 # TODO
 # CSV 로드 한번에 다 디비에 INSERT 하는거
