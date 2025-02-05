@@ -41,7 +41,7 @@ $ sudo docker rm local-postgres
 # sudo docker exec -it local-postgres bash
 ```
 
-- RUN
+## RUN
 ```bash
 # DB 정보에 맞춰 수정 
 $ cp env.dummy .env\
