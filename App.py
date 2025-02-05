@@ -15,8 +15,18 @@ DB_CONFIG = {
     "port" : os.getenv("DB_PORT")
 }
 
-def get_connection():
+def get_connection(menu_name ,member_name, dt):
     return psycopg.connect(**DB_CONFIG)
+def insert_menu():
+    conn = get.connection()
+    cursor = conn.cursor()
+    cursor.execute(
+            "INSERT INTO lunch_menu (menu_name, member_name, dt) VALUES (%s, %s, %s);",
+            (menu_name, member_name, dt)
+        )
+        conn.commit()
+        cursor.close()
+        conn.close()
 
 st.title("현룡 점심 기록장")
 st.subheader("입력")
@@ -27,15 +37,8 @@ isPress = st.button("메뉴 저장")
 
 if isPress:
     if menu_name and member_name and dt:
-        conn = get_connection()
-        cursor = conn.cursor()
-        cursor.execute(
-            "INSERT INTO lunch_menu (menu_name, member_name, dt) VALUES (%s, %s, %s);",
-            (menu_name, member_name, dt)
-        )
-        conn.commit()
-        cursor.close()
-        st.success(f"버튼{isPress} // {menu_name} // {member_name} // {dt}")
+        insert_menu(menu_name, member_name, dt)
+        st.success(f"입력 성공")
     else:
         st.warning(f"모든 값을 입력해주세요!")
 
