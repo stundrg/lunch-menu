@@ -25,7 +25,7 @@ def insert_menu(menu_name, member_id, dt):
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute(
-                """INSERT INTO lunch_menu (menu_name, member_name, dt) VALUES (%s, %s, %s);""",
+                """INSERT INTO lunch_menu (menu_name, member_id, dt) VALUES (%s, %s, %s);""",
                 (menu_name, member_id, dt)
             )
         conn.commit()
@@ -62,7 +62,7 @@ if isPress:
         st.warning(f"모든 값을 입력해주세요!")
 
 st.subheader("확인")
-query = """SELECT menu_name, member_name, dt FROM lunch_menu ORDER BY dt desc"""
+query = """SELECT menu_name, member_id, dt FROM lunch_menu ORDER BY dt desc"""
 conn = get_connection()
 cursor = conn.cursor()
 cursor.execute(query)
