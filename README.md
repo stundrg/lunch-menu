@@ -1,9 +1,8 @@
 # lunch-menu
-- [] 나의 점심메뉴를 수집
-- [] 분석
-- [] 알람 (오늘 입력하지 않았으면 입력 혹은 로컬이 아닌 사람들에게 제공한다면 입력하지 않은 사람들에게 제공)
-- [] *CSV to DB* 집중!
-- [] 
+- [ ] 나의 점심메뉴를 수집
+- [ ] 분석
+- [ ] 알람 (오늘 입력하지 않았으면 입력 혹은 로컬이 아닌 사람들에게 제공한다면 입력하지 않은 사람들에게 제공)
+- [ ] *CSV to DB* 집중!
 # Ready For me
 
 ## Install DB with Docker
@@ -115,7 +114,7 @@ $ sudo docker rm local-postgres
 # sudo docker exec -it local-postgres bash
 ```
 
-- RUN
+## RUN
 ```bash
 # DB 정보에 맞춰 수정 
 $ cp env.dummy .env\
