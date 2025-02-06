@@ -78,7 +78,8 @@ c_press = st.button("누구냐 너... 밥 만 홀랑 먹고 입력 안한 너...
 #"""
 query = """
 SELECT
-    m.name
+    m.name,
+    COUNT(l.id) AS cnt
 FROM
     member m
     LEFT JOIN lunch_menu l
@@ -174,9 +175,10 @@ except Exception as e:
     print(f"Exception:{e}" )
 
 # TODO
-# CSV 로드 한번에 다 디비에 INSERT 하는거
+# CSV 로드 한번에 다 디비에 INSERT 하는거 하지만 실패 되면 실패한 값 보여주는 거
 st.subheader("Bulk Insert")
-if st.button("한방에 인서트"):
+ggoock_press = st.button("한방에 인서트")
+if st.button:
     df = pd.read_csv('note/menu.csv')
     start_idx = df.columns.get_loc('2025-01-07')
     melted_df = df.melt(id_vars=['ename'] ,value_vars=df.columns[start_idx:-2],
