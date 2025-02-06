@@ -27,6 +27,11 @@ CREATE TABLE public.lunch_menu (
 	CONSTRAINT lunch_menu_pk PRIMARY KEY (id)
 );
 
+create table member(
+id serial NOT NULL,
+name text unique NOT NULL
+);
+
 alter table lunch_menu
 add constraint unique_member_dt unique (member_name, dt);
 
