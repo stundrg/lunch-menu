@@ -34,11 +34,17 @@ def insert_menu(menu_name, member_name, dt):
     except Exception as e:
         print(f"Exception:{e}")
         return False
-
+df = pd.read_csv('note/menu.csv')
 st.title(f"현룡 점심 기록장{db_name}")
 st.subheader("입력")
 menu_name = st.text_input("오늘 점심", placeholder = "예 : 김치찌개")
-member_name = st.text_input("나의 이름", placeholder = "예: 강현룡", value = "hyun")
+# member_name = st.text_input("먹은 사람", value = "hyun")
+member_name = st.selectbox(
+        "먹은 사람 선택",
+        df['ename']
+        ,
+        placeholder="예: 강현룡",
+)
 dt = st.date_input("YUMMY DATE")
 isPress = st.button("메뉴 저장")
 
@@ -73,24 +79,6 @@ st.write("""
 
 ![img](https://cdnweb01.wikitree.co.kr/webdata/editor/201608/14/img_20160814095841_398f23f1.jpg)
 """ )
-
-#해당 코드는 제가 만든 코드로 상관없는코드입니다
-#st.subheader("통계")
-#df = pd.read_csv('note/menu.csv')
-
-
-#start_idx = df.columns.get_loc('2025-01-07')
-
-#melted_df = df.melt(id_vars=['ename'],
-#                    value_vars=df.columns[start_idx:-2],
-#                    var_name='dt', value_name='menu')
-
-#not_na_df = melted_df[~melted_df['menu'].isin(['-', 'x', '<결석>'])]
-
-#gdf = not_na_df.groupby('ename')['menu'].count().reset_index()
-#hyun_count = gdf.loc[gdf['ename'] == 'hyun', 'menu'].values[0] if 'hyun' in gdf['ename'].values else 0
-#gdf
-#st.write(f"Hyun이 먹은 메뉴 개수: {hyun_count}")
 
 
 st.subheader("통계")
