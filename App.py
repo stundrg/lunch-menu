@@ -62,7 +62,17 @@ if isPress:
         st.warning(f"모든 값을 입력해주세요!")
 
 st.subheader("확인")
-query = """SELECT menu_name AS menu, member_id as ename, dt  FROM lunch_menu ORDER BY dt desc"""
+query = """
+SELECT
+	l.menu_name,
+	m.name,
+	l.dt
+FROM 
+	lunch_menu l  
+	inner join member m
+	on l.member_id = m.id
+	;
+"""
 conn = get_connection()
 cursor = conn.cursor()
 cursor.execute(query)
