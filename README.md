@@ -45,7 +45,61 @@ values
 ('nuni');
 
 select jsonb_object_agg(name,id)
-from member;
+from(
+	select name , id from member order by id
+)temp;
+{"SEO": 5, "TOM": 1, "cho": 2, "hyun": 3, "nuni": 10, "JERRY": 4, "jacob": 7, "jiwon": 6, "lucas": 9, "heejin": 8}
+
+
+alter table lunch_menu
+add column member_id int;
+
+select * from lunch_menu limit 1;
+
+
+-- 사용하지 않는 컬럼 삭제
+alter table lunch_menu
+drop column member_name;
+
+-- member_id null 값을 허용하지 않도록 설정
+-- delete from lunch_menu;
+alter table lunch_menu
+alter column member_id set not null;
+
+-- 새로운 제약 조건 추가
+alter table lunch_menu 
+add constraint unique_member_id_dt unique (member_id,dt);
+
+-- rename
+ALTER TABLE public.lunch_menu RENAME CONSTRAINT unique_memberid_dt TO unique_member_id_dt;
+
+
+-- 멤버 테이블 
+alter table member
+add constraint member_id_pk primary key(id);
+
+-- 관계 조건 추가
+alter table lunch_menu 
+add constraint menu_member_fk
+	foreign key (member_id)
+	references member(id)
+;
+
+--테스트
+select * from member;
+
+select max(id) from member; -- 10
+
+select * from lunch_menu;
+
+insert into lunch_menu(menu_name, member_id, dt)
+values('햄버거', 3,'2025-01-01')
+
+insert into lunch_menu(menu_name, member_id, dt)
+values('햄버거', 11,'2025-01-01')
+-- SQL Error [23503]: ERROR: insert or update on table "lunch_menu" violates foreign key constraint "menu_member_fk" Detail: Key (member_id)=(11) is not present in table "member".
+
+
 ```
 
 ## Dev
