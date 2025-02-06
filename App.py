@@ -38,8 +38,8 @@ df = pd.read_csv('note/menu.csv')
 st.title(f"현룡 점심 기록장{db_name}")
 st.subheader("입력")
 menu_name = st.text_input("오늘 점심", placeholder = "예 : 김치찌개")
-member_name = st.text_input("나의 이름", value = "hyun")
-option = st.selectbox(
+# member_name = st.text_input("먹은 사람", value = "hyun")
+member_name = st.selectbox(
         "먹은 사람 선택",
         df['ename']
         ,
