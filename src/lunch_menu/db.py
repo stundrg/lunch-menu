@@ -39,13 +39,15 @@ def insert_menu(menu_name, member_id, dt):
 def select_table():
     query = """
     SELECT
-    l.menu_name,
-    m.name,
-    l.dt
+        l.menu_name,
+        m.name,
+        l.dt
     FROM
-    lunch_menu l
-    inner join member m
-    on l.member_id = m.id
+        lunch_menu l
+    inner join
+            member m
+    on 
+            l.member_id = m.id
     ;
     """
     conn = get_connection()

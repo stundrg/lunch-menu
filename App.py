@@ -9,47 +9,9 @@ members = {"SEO": 5, "TOM": 1, "cho": 2, "hyun": 3, "nuni": 10, "JERRY": 4, "jac
 st.title(f"현룡 점심 기록장{db_name}")
 st.subheader("입력")
 
-
 # HOMEWORK
 # 오늘 점심 안한 사람을 알 수 있는 버튼 만들자
 
-st.subheader("범인색출")
-c_press = st.button("누구냐 너... 밥 만 홀랑 먹고 입력 안한 너...")
-query = """
-SELECT
-    m.name,
-    COUNT(l.id) AS cnt
-FROM
-    member m
-    LEFT JOIN lunch_menu l
-    ON l.member_id = m.id
-    AND l.dt = CURRENT_DATE
-GROUP BY
-    m.id, m.name
-HAVING
-    COUNT(l.id) = 0
-ORDER BY
-    m.name ASC;
-"""
-if c_press:
-    try:
-        conn = get_connection()
-        cursor = conn.cursor()
-        cursor.execute(query)
-        rows = cursor.fetchall()
-        cursor.close()
-        conn.close()
-        
-        if not rows:
-            st.write("모두 입력 했습니다.")
-        else:
-            names = [row[0] for row in rows]
-            name_str = ", ".join(names)
-            count = len(names)
-            st.success(f"범인은?!: {name_str} 입니다. 총{count}명 입니다.")
-    except Exception as e:
-        st.warning("조회 중 오류가 발생했지비..")
-        print(f"Exception: {e}")
 
 st.subheader("확인")
 # 함수로 빼서 db.py로 이동
