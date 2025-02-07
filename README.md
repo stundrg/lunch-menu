@@ -15,6 +15,8 @@ $ sudo docker run --name local-postgres \
 -p 5432:5432\
 -d postgres:15.10
 ```
+## Streamlit Deploy
+https://streamlit.io/
 ## Create Table
 - postgres
 
