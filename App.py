@@ -1,43 +1,14 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
-import psycopg
-import os
 from dotenv import load_dotenv
-from lunch_menu.db import get_connection
+from lunch_menu.db import get_connection, db_name, insert_menu, select_table
 
 members = {"SEO": 5, "TOM": 1, "cho": 2, "hyun": 3, "nuni": 10, "JERRY": 4, "jacob": 7, "jiwon": 6, "lucas": 9, "heejin": 8}
-# https://docs.streamlit.io/develop/concepts/connections/secrets-management
-load_dotenv()
-db_name = os.getenv("DB_NAME")
 
-DB_CONFIG = {
-    "user" : os.getenv("DB_USERNAME"),
-    "dbname" : db_name,
-    "password" : os.getenv("DB_PASSWORD"),
-    "host" : os.getenv("DB_HOST"),
-    "port" : os.getenv("DB_PORT")
-}
-def insert_menu(menu_name, member_id, dt):
-    try:
-        conn = get_connection()
-        cursor = conn.cursor()
-        cursor.execute(
-                """INSERT INTO lunch_menu (menu_name, member_id, dt) VALUES (%s, %s, %s);""",
-                (menu_name, member_id, dt)
-            )
-        conn.commit()
-        cursor.close()
-        conn.close()
-        return True
-    except Exception as e:
-        print(f"Exception:{e}")
-        return False
-df = pd.read_csv('note/menu.csv')
 st.title(f"현룡 점심 기록장{db_name}")
 st.subheader("입력")
 menu_name = st.text_input("오늘 점심", placeholder = "예 : 김치찌개")
-# member_name = st.text_input("먹은 사람", value = "hyun")
 member_name = st.selectbox(
         "먹은 사람",
         options = list(members.keys()),
@@ -63,17 +34,6 @@ if isPress:
 
 st.subheader("범인색출")
 c_press = st.button("누구냐 너... 밥 만 홀랑 먹고 입력 안한 너...")
-#query = """
-#SELECT
-#	l.menu_name,
-#	m.name,
-#	l.dt
-#FROM 
-#	lunch_menu l  
-#	inner join member m
-#	on l.member_id = m.id
-#	;
-#"""
 query = """
 SELECT
     m.name,
@@ -111,26 +71,9 @@ if c_press:
         print(f"Exception: {e}")
 
 st.subheader("확인")
-query = """
-SELECT
-	l.menu_name,
-	m.name,
-	l.dt
-FROM
-	lunch_menu l
-	inner join member m
-	on l.member_id = m.id
-	;
-"""
-conn = get_connection()
-cursor = conn.cursor()
-cursor.execute(query)
-rows = cursor.fetchall()
-cursor.close()
-conn.close()
+# 함수로 빼서 db.py로 이동
+select_df = select_table()
 
-# selected_df = pd.DataFrame([[1,2,3],[4,5,6]], columns = ['a','b','c'])
-select_df = pd.DataFrame(rows, columns = ['menu','ename','dt'])
 select_df
 
 
@@ -164,6 +107,8 @@ rows = cursor.fetchall()
 cursor.close()
 conn.close()
 # 📊 Matplotlib로 바 차트 그리기
+
+st.subheader("차트")
 try:
     fig, ax = plt.subplots()
     gdf.plot(x='ename',y='menu', kind='bar', ax=ax)
