@@ -4,12 +4,35 @@ import matplotlib.pyplot as plt
 from dotenv import load_dotenv
 from lunch_menu.db import get_connection, db_name, insert_menu, select_table
 
+st.set_page_config(page_title="Old", page_icon="🍕")
+st.markdown("# 🍕Old Page🍔")
+st.sidebar.header("Old Page")
+
 members = {"SEO": 5, "TOM": 1, "cho": 2, "hyun": 3, "nuni": 10, "JERRY": 4, "jacob": 7, "jiwon": 6, "lucas": 9, "heejin": 8}
 
 st.title(f"현룡 점심 기록장{db_name}")
 st.subheader("입력")
+menu_name = st.text_input("오늘 점심", placeholder = "예 : 김치찌개")
+member_name = st.selectbox(
+        "먹은 사람",
+        options = list(members.keys()),
+        index = list(members.keys()).index('hyun') # index 값으로 디폴트 값 지정 가능
+)
+member_id = members[member_name]
 
+dt = st.date_input("YUMMY DATE")
 
+isPress = st.button("메뉴 저장")
+
+if isPress:
+    # member_name 을 member_id로 바꾸어서 DB에 id 가 insert 되도록 하기
+    if menu_name and member_id and dt:
+        if insert_menu(menu_name, member_id, dt):
+            st.success(f"입력 성공")
+        else:
+            st.error(f"입력 실패")
+    else:
+        st.warning(f"모든 값을 입력해주세요!")
 # HOMEWORK
 # 오늘 점심 안한 사람을 알 수 있는 버튼 만들자
 
