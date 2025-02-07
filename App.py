@@ -9,12 +9,10 @@ members = {"SEO": 5, "TOM": 1, "cho": 2, "hyun": 3, "nuni": 10, "JERRY": 4, "jac
 st.title(f"현룡 점심 기록장{db_name}")
 st.subheader("입력")
 
-# HOMEWORK
-# 오늘 점심 안한 사람을 알 수 있는 버튼 만들자
 
 
 st.subheader("확인")
-# 함수로 빼서 db.py로 이동
+
 select_df = select_table()
 
 select_df
@@ -30,69 +28,3 @@ st.write("""
 """ )
 
 
-st.subheader("통계")
-gdf = select_df.groupby('ename')['menu'].count().reset_index()
-gdf
-query ='''
-select
-	l.menu_name,
-	m.name,
-	l.dt
-from
-	member m left join lunch_menu l
-on l.dt = Current_date
-where l.dt is null;
-'''
-conn = get_connection()
-cursor = conn.cursor()
-cursor.execute(query)
-rows = cursor.fetchall()
-cursor.close()
-conn.close()
-# 📊 Matplotlib로 바 차트 그리기
-
-st.subheader("차트")
-try:
-    fig, ax = plt.subplots()
-    gdf.plot(x='ename',y='menu', kind='bar', ax=ax)
-    st.pyplot(fig)
-except Exception as e:
-    st.warning(f"차트를 그리기에 충분한 데이터가 없습니다.")
-    print(f"Exception:{e}" )
-
-# TODO
-# CSV 로드 한번에 다 디비에 INSERT 하는거 하지만 실패 되면 실패한 값 보여주는 거
-st.subheader("Bulk Insert")
-ggoock_press = st.button("한방에 인서트")
-if ggoock_press:
-    try:
-        df = pd.read_csv('note/menu.csv')
-        start_idx = df.columns.get_loc('2025-01-07')
-        melted_df = df.melt(id_vars=['ename'] ,value_vars=df.columns[start_idx:-2],
-                         var_name='dt',value_name = 'menu')
-
-        not_na_df = melted_df[~melted_df['menu'].isin(['-','x','<결석>'])]
-    # 1. 결과를 담을 리스트를 생성
-        results = []
-    # 각 행에 대해 insert 실행
-        for _, row in not_na_df.iterrows():
-            m_id = members[row['ename']]
-            try:
-                insert_menu(row['menu'], m_id, row['dt'])
-                results.append(True)
-            except Exception as e:
-                results.append(False)
-                print(f"Error inserting row: {row}, Error : {e}")
-
-        # 3. 성공/실패에 따라 메시지 출력
-            total_count = len(results)
-            true_count = sum(results)
-            false_count = total_count - true_count
-        
-            if false_count == 0:
-                st.success(f"Bulk insert Success 총{total_count}건 중 {true_count}건 성공")
-            else:
-                st.error(f"Bulk insert Fail 총{total_count}건 중 {false_count}건 실패")
-    except Exception as e:
-        st.warning("Bulk insert Error")
-        print(f"Exception: {e}")
