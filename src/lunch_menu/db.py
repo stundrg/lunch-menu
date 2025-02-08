@@ -59,3 +59,29 @@ def select_table():
 
     df = pd.DataFrame(rows, columns = ['menu','ename','dt'])
     return df
+
+
+# 메뉴별 빈도 계산
+def get_popular_menu():
+    # 인기 메뉴를 찾는 SQL 쿼리
+    query = """
+    SELECT menu_name, COUNT(*) AS menu_count
+    FROM lunch_menu
+    GROUP BY menu_name
+    ORDER BY menu_count DESC;
+    """
+
+    try:
+        # 데이터베이스 연결
+        conn = get_connection()
+
+        # 쿼리 실행 및 결과를 DataFrame으로 변환
+        df = pd.read_sql(query, conn)
+        # 연결 종료
+        conn.close()
+
+        return df
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
+
