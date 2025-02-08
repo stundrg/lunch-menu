@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
 from dotenv import load_dotenv
 from lunch_menu.db import get_connection, db_name, insert_menu, select_table
 
