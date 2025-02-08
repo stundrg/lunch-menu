@@ -21,7 +21,7 @@ if ggoock_press:
     # 1. 결과를 담을 리스트를 생성
         results = []
         fail_count = 0
-        false_count =-
+        false_count = 0
     # 각 행에 대해 insert 실행
         for _, row in not_na_df.iterrows():
             m_id = members[row['ename']]
