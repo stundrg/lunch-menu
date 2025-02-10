@@ -1,12 +1,27 @@
 import pandas as pd
 import streamlit as st
 import matplotlib.pyplot as plt
+import matplotlib.font_manager as fm
 from lunch_menu.db import get_connection ,get_noodle_count_by_year
 
 
-st.markdown("## 연도 별 출시 라면 수")
 # st.markdown('''![img]()''')
+font_path = "/usr/share/fonts/truetype/nanum/NanumGothic.ttf"
+
+plt.rcParams['axes.unicode_minus'] = False
+
+try:
+    font_prop = fm.FontProperties(fname=font_path)
+    plt.rcParams["font.family"] = font_prop.get_name()
+except Exception:
+    plt.rcParams["font.family"] = "DejaVu Sans"  # 한글 폰트 없을 경우 기본 폰트
+
+# 음수 기호 깨짐 방지
+plt.rcParams["axes.unicode_minus"] = False
+
 df = get_noodle_count_by_year()
+
+st.markdown("## 연도 별 출시 라면 수")
 
 if df is not None and not df.empty:
    
