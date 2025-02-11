@@ -56,7 +56,6 @@ def insert_data(table_name, columns, *values):
         return False
 
 
-
 def insert_noodle(date, company, food_name, price):
     try:
         conn = get_connection()
