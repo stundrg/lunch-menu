@@ -1,6 +1,6 @@
 [project]
 name = "lunch-menu"
-version = "0.6.0"
+version = "0.6.1"
 description = "Default template for PDM package"
 authors = [
     {name = "khr0106", email = "kanghr990106@gmail.com"},
