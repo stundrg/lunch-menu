@@ -1,0 +1,1 @@
+API_AGE = "https://agecalculator.calcalhan.store/api/py/ageCalculator"
