@@ -2,7 +2,7 @@ import pandas as pd
 import streamlit as st
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
-from lunch_menu.db import get_connection ,get_noodle_count_by_year
+from lunch_menu.db import get_noodle_count_by_year
 
 
 # st.markdown('''![img]()''')

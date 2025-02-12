@@ -145,3 +145,20 @@ def get_noodle_count_by_year():
     except Exception as e:
         print(f"Error: {e}")
         return None
+
+
+# for sync
+def select_table_sync():
+    query = """SELECT
+    menu_name,
+    name,
+    dt
+    FROM lunch_menu as l left join member as m on l.member_name = m.id
+    ORDER BY dt DESC"""
+    
+    conn = get_connection()
+    with conn.cursor() as cur:
+        cur.execute(query)
+        rows = cur.fetchall()
+    select_df = pd.DataFrame(rows, columns=['menu_name','name','dt'])
+    return select_df
