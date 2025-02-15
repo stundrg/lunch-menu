@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
-from lunch_menu.db import get_connection, db_name, insert_menu, select_table
+from lunch_menu.db import insert_menu
+
 
 
 members = {"SEO": 5, "TOM": 1, "cho": 2, "hyun": 3, "nuni": 10, "JERRY": 4, "jacob": 7, "jiwon": 6, "lucas": 9, "heejin": 8}
